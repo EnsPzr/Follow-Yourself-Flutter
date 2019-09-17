@@ -1,0 +1,1 @@
+<p>Daha öncelerden Xamarin kullanılarak yapılan proje, Flutter kullanılarak yapılmaya çalışılacaktır</p>
