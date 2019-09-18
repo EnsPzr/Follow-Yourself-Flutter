@@ -68,34 +68,53 @@ class ReportPage extends StatelessWidget {
 
 Container addRow(double columnWidth, str1, str2, str3, str4, str5) {
   return Container(
-    color: Colors.grey,
+    // color: Colors.grey,
     child: Row(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         Container(
           alignment: Alignment.center,
           width: columnWidth,
-          child: Center(child: Text(str1)),
+          child: Center(
+              child: Text(
+            str1,
+            textAlign: TextAlign.center,
+          )),
         ),
         Container(
           alignment: Alignment.center,
           width: columnWidth,
-          child: Text(str2),
+          child: Text(
+            str2,
+            textAlign: TextAlign.center,
+          ),
         ),
         Container(
           alignment: Alignment.center,
           width: columnWidth,
-          child: Center(child: Text(str3)),
+          child: Center(
+              child: Text(
+            str3,
+            textAlign: TextAlign.center,
+          )),
         ),
         Container(
           alignment: Alignment.center,
           width: columnWidth,
-          child: Center(child: Text(str4)),
+          child: Center(
+              child: Text(
+            str4,
+            textAlign: TextAlign.center,
+          )),
         ),
         Container(
           alignment: Alignment.center,
           width: columnWidth,
-          child: Center(child: Text(str5)),
+          child: Center(
+              child: Text(
+            str5,
+            textAlign: TextAlign.center,
+          )),
         ),
       ],
     ),

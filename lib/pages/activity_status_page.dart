@@ -42,7 +42,7 @@ class _ActivityStatusPageState extends State<ActivityStatusPage> {
                       context: context,
                       firstDate: DateTime(1900),
                       initialDate: currentValue ?? DateTime.now(),
-                      lastDate: DateTime(2100));
+                      lastDate: DateTime.now());
                 },
               ),
               SizedBox(

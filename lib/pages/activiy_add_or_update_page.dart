@@ -39,17 +39,17 @@ class _ActivityAddOrUpdatePageState extends State<ActivityAddOrUpdatePage> {
                 "Aktivite Aktiflik Durumu:",
                 style: TextStyle(color: Colors.blue.shade700),
               ),
-              DropdownButton<bool>(
+              DropdownButtonFormField<bool>(
                 hint: Text("Seçiniz"),
                 value: secilenDurum,
                 items: [
                   DropdownMenuItem<bool>(
-                    child: Text("Aktif Değil"),
-                    value: false,
-                  ),
-                  DropdownMenuItem<bool>(
                     child: Text("Aktif"),
                     value: true,
+                  ),
+                  DropdownMenuItem<bool>(
+                    child: Text("Aktif Değil"),
+                    value: false,
                   ),
                 ],
                 onChanged: (bool deger) {
@@ -57,6 +57,24 @@ class _ActivityAddOrUpdatePageState extends State<ActivityAddOrUpdatePage> {
                     secilenDurum = deger;
                   });
                 },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8, right: 8, left: 8),
+                child: ButtonTheme(
+                  height: 43,
+                  child: RaisedButton(
+                    onPressed: () {},
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Text(
+                      "Kaydet",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    color: Colors.green.shade500,
+                    textColor: Colors.white,
+                  ),
+                ),
               ),
             ],
           ),

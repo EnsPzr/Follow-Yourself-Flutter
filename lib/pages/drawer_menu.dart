@@ -42,35 +42,35 @@ class _DrawerMenuState extends State<DrawerMenu> {
 }
 
 Widget CreateMenuItem(BuildContext context, String name, double top,
-    double rightAndLeft, String route) {
-  return Padding(
-    child: Container(
-      child: InkWell(
-        onTap: () {
-          Navigator.pushReplacementNamed(context, route);
-        },
-        child: ListTile(
-          // leading: Icon(Icons.home),
-          title: Center(
-            child: Text(
-              name,
-              style: TextStyle(color: Colors.white),
+        double rightAndLeft, String route) =>
+    Padding(
+      child: Container(        
+        child: InkWell(
+          onTap: () {
+            Navigator.pushReplacementNamed(context, route);
+          },
+          child: ListTile(
+            // leading: Icon(Icons.home),
+            title: Center(
+              child: Text(
+                name,
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            trailing: Icon(
+              Icons.chevron_right,
+              color: Colors.white,
             ),
           ),
-          trailing: Icon(
-            Icons.chevron_right,
-            color: Colors.white,
+          splashColor: Colors.blue,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.blue.shade300,
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
           ),
         ),
-        splashColor: Colors.blue,
       ),
-      decoration: BoxDecoration(
-        color: Colors.blue.shade300,
-        borderRadius: BorderRadius.all(
-          Radius.circular(10),
-        ),
-      ),
-    ),
-    padding: EdgeInsets.only(top: top, right: rightAndLeft, left: rightAndLeft),
-  );
-}
+      padding:
+          EdgeInsets.only(top: top, right: rightAndLeft, left: rightAndLeft),
+    );
