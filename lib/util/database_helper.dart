@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:followyourselfflutter/models/activity.dart';
+import 'package:followyourselfflutter/models/activityStatus.dart';
+import 'package:followyourselfflutter/viewModels/activityStatusVM.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
@@ -41,11 +43,16 @@ class DatabaseHelper {
     await db.execute(
         "CREATE TABLE Activity (activityId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, activityName TEXT, activityRegisterDate TEXT, isActive INTEGER)");
     await db.execute(
-        "CREATE TABLE ActivityStatus (activityStatusId INT PRIMARY KEY NOT NULL, activityId INT REFERENCES Activity (activityId), activityValue DOUBLE, date TEXT);");
+        "CREATE TABLE ActivityStatus (activityStatusId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, activityId INT REFERENCES Activity (activityId), activityValue DOUBLE, date TEXT);");
   }
 
-  Future<List<Map<String, dynamic>>> getAllActivities() async {
+  Future<List<Map<String, dynamic>>> getAllActivities({bool isActive}) async {
     var db = await _getDatabase();
+    if (isActive != null) {
+      var result = await db.query("Activity",
+          where: "isActive=?", whereArgs: [1], orderBy: 'activityId ASC');
+      return result;
+    }
     var result = await db.query("Activity", orderBy: 'activityId ASC');
     return result;
   }
@@ -86,6 +93,75 @@ class DatabaseHelper {
       return true;
     else
       return false;
-    //buradan devam edilecek
+  }
+
+  Future<List<ActivityStatusVM>> getAllActivityStatus(DateTime date) async {
+    var db = await _getDatabase();
+    var allActivityStatus = List<ActivityStatusVM>();
+    var veri = await getAllActivities(isActive: true);
+    for (Map readMap in veri) {
+      var activity = Activity.fromMap(readMap);
+      // var now = DateTime.now();
+      var diff = activity.activityRegisterDate.difference(date).inDays;
+      if (diff <= 0) {
+        var activityStatus = await db.query("ActivityStatus",
+            where: 'activityId=? AND date=?',
+            whereArgs: [
+              activity.activityId,
+              DateTime(date.year, date.month, date.day).toIso8601String()
+            ]);
+        if (activityStatus.length > 0) {
+          var singleActivityState = ActivityStatus.fromMap(activityStatus[0]);
+          allActivityStatus.add(ActivityStatusVM(
+              singleActivityState.activityValue,
+              activity.activityName,
+              activity.activityId,
+              activityStatusId: singleActivityState.activityStatusId));
+        } else {
+          allActivityStatus.add(
+              ActivityStatusVM(0, activity.activityName, activity.activityId));
+        }
+      }
+    }
+    ;
+    debugPrint("toplam ${allActivityStatus.length}");
+    return allActivityStatus;
+  }
+
+  Future<int> saveActivityStatus(
+      List<ActivityStatusVM> allActivityStatus, DateTime date) async {
+    var db = await _getDatabase();
+    var counter = 0;
+    for (var i = 0; i < allActivityStatus.length; i++) {
+      var activityStatus = await db.query("ActivityStatus",
+          where: 'activityId=? AND date=?',
+          whereArgs: [allActivityStatus[i].activityId, date.toIso8601String()]);
+      if (activityStatus.length == 0) {
+        var result = await addActivityStatus(allActivityStatus[i], date);
+        if (result != 0) counter++;
+      } else {
+        var result = await updateActivityStatus(allActivityStatus[i], date);
+        if (result != 0) counter++;
+      }
+    }
+    return counter;
+  }
+
+  Future<int> addActivityStatus(
+      ActivityStatusVM activityStateVM, DateTime date) async {
+    var db = await _getDatabase();
+    var activityState = ActivityStatus(
+        activityStateVM.activityId, activityStateVM.activityValue, date);
+    var result = await db.insert("ActivityStatus", activityState.toMap());
+    return result;
+  }
+
+  Future<int> updateActivityStatus(
+      ActivityStatusVM activityStateVM, DateTime date) async {
+    var db = await _getDatabase();
+    var activityState = ActivityStatus.withId(activityStateVM.activityStatusId,
+        activityStateVM.activityId, activityStateVM.activityValue, date);
+    var result = await db.update("ActivityStatus", activityState.toMap());
+    return result;
   }
 }

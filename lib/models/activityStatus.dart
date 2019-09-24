@@ -27,7 +27,7 @@ class ActivityStatus {
     map['activityStatusId'] = _activityStatusId;
     map['activityId'] = _activityId;
     map['activityValue'] = _activityValue;
-    map['date'] = _date;
+    map['date'] = _date.toIso8601String();
     return map;
   }
 
@@ -35,6 +35,6 @@ class ActivityStatus {
     this._activityStatusId = map['activityStatusId'];
     this._activityId = map['activityId'];
     this._activityValue = (map['activityValue'] as double);
-    this._date = (map['date'] as DateTime);
+    this._date = DateTime.parse(map['date']);
   }
 }
