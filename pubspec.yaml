@@ -26,6 +26,9 @@ dependencies:
   datetime_picker_formfield: ^0.4.3
   # flutter_datetime_picker: ^1.2.6
   date_format: ^1.0.5  
+  shared_preferences: ^0.4.3
+  path_provider: ^0.4.1
+  sqflite: any
 
 dev_dependencies:
   flutter_test:

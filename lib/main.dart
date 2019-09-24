@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:followyourselfflutter/pages/activity_page.dart';
 import 'package:followyourselfflutter/pages/activity_status_page.dart';
 import 'package:followyourselfflutter/pages/activiy_add_or_update_page.dart';
-import 'package:followyourselfflutter/pages/drawer_menu.dart';
 import 'package:followyourselfflutter/pages/report_page.dart';
 
 void main() => runApp(MyApp());
@@ -20,8 +19,8 @@ class MyApp extends StatelessWidget {
         '/activityAddOrUpdatePage': (context) => ActivityAddOrUpdatePage()
       },
       theme: ThemeData(
-          // primarySwatch: Colors.red,
-          ),
+        primarySwatch: Colors.red,
+      ),
       // home:
     );
   }
