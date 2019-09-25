@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:followyourselfflutter/util/database_helper.dart';
 import 'package:followyourselfflutter/viewModels/reportVM.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'drawer_menu.dart';
 
 class ReportPage extends StatefulWidget {
@@ -56,7 +57,7 @@ class _ReportPageState extends State<ReportPage> {
       widgetList.add(addRow(width / 5, item.activityName, item.sum,
           item.thisYear, item.thisMonth, item.thisWeek,
           isGrey: i % 2 == 0 ? true : false));
-          i++;
+      i++;
     }
 
     widgetList.add(
@@ -65,7 +66,13 @@ class _ReportPageState extends State<ReportPage> {
         child: ButtonTheme(
           height: 40,
           child: RaisedButton(
-            onPressed: () {},
+            onPressed: () async {
+              var result = await authorizateControl();
+              if (result) {
+              } else {
+                openShowDialog(context, true);
+              }
+            },
             elevation: 4,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -85,7 +92,13 @@ class _ReportPageState extends State<ReportPage> {
         child: ButtonTheme(
           height: 40,
           child: RaisedButton(
-            onPressed: () {},
+            onPressed: () async {
+              var result = await authorizateControl();
+              if (result) {
+              } else {
+                openShowDialog(context, false);
+              }
+            },
             elevation: 4,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -158,6 +171,54 @@ Container addRow(double columnWidth, str1, str2, str3, str4, str5,
         ),
       ],
     ),
+  );
+}
+
+Future<bool> authorizateControl() async {
+  PermissionStatus permission =
+      await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
+  if (permission == PermissionStatus.granted) {
+    return true;
+  } else {
+    Map<PermissionGroup, PermissionStatus> permissions =
+        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    PermissionStatus permission = permissions[PermissionGroup.storage];
+    if (permission == PermissionStatus.denied) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+}
+
+void openShowDialog(context, bool type) async {
+  showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Hata'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              type
+                  ? Text(
+                      'Yedekleme işlemi için dosya erişimine izin vermeniz gerekmektedir.')
+                  : Text(
+                      'Geri Yükleme işlemi için dosya erişimine izin vermeniz gerekmektedir.'),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text("Tamam"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
   );
 }
 /*
