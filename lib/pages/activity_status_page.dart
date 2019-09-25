@@ -143,11 +143,14 @@ class _ActivityStatusPageState extends State<ActivityStatusPage> {
           ),
           onSaved: (deger) {
             activityStatus[i].activityValue =
-                deger != null ? double.parse(deger) : 0;
+                deger.length != 0 ? double.parse(deger) : 0;
           },
           validator: (deger) {
-            if (double.tryParse(deger) == null) {
-              return "Sadece sayı girilmelidir";
+            debugPrint(deger);
+            if (deger.length != 0) {
+              if (double.tryParse(deger) == null) {
+                return "Sadece sayı girilmelidir";
+              }
             }
           },
         ),

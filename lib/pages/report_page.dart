@@ -1,10 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:followyourselfflutter/util/database_helper.dart';
+import 'package:followyourselfflutter/viewModels/reportVM.dart';
 import 'drawer_menu.dart';
 
-class ReportPage extends StatelessWidget {
+class ReportPage extends StatefulWidget {
+  @override
+  _ReportPageState createState() => _ReportPageState();
+}
+
+class _ReportPageState extends State<ReportPage> {
+  DatabaseHelper databaseHelper;
+  List reportList = List<Report>();
+  bool isSuccess = false;
+  var width = 0.0;
+  @override
+  void initState() {
+    super.initState();
+    databaseHelper = DatabaseHelper();
+    databaseHelper.report().then((value) {
+      reportList = value as List<Report>;
+      Future.delayed(Duration(milliseconds: 2000), () {
+        isSuccess = true;
+        setState(() {});
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width - 10;
+    width = MediaQuery.of(context).size.width - 10;
     return Scaffold(
       drawer: DrawerMenu(),
       appBar: AppBar(
@@ -12,63 +36,79 @@ class ReportPage extends StatelessWidget {
         backgroundColor: Colors.red.shade900,
       ),
       body: Container(
-        child: ListView(
-          padding: EdgeInsets.only(top: 10, right: 5, left: 5),
-          children: <Widget>[
-            addRow(width / 5, "Aktivite Adı", "Toplam Yapılma", "Bu Yıl",
-                "Bu Ay", "Bu Hafta"),
-            addRow(width / 5, "0", "0", "0", "0", "0"),
-            addRow(width / 5, "10", "0", "10", "0", "10"),
-            addRow(width / 5, "100", "10", "10", "100", "10"),
-            addRow(width / 5, "100", "10", "10", "100", "10"),
-            addRow(width / 5, "100", "10", "10", "100", "10"),
-            addRow(width / 5, "100", "10", "10", "100", "10"),
-            Padding(
-              padding: const EdgeInsets.only(top: 8, right: 8, left: 8),
-              child: ButtonTheme(
-                height: 40,
-                child: RaisedButton(
-                  onPressed: () {},
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Text(
-                    "Yedekle",
-                    style: TextStyle(fontSize: 17),
-                  ),
-                  color: Colors.green.shade500,
-                  textColor: Colors.white,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 8, left: 8),
-              child: ButtonTheme(
-                height: 40,
-                child: RaisedButton(
-                  onPressed: () {},
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Text(
-                    "Yedekten Geri Yükle",
-                    style: TextStyle(fontSize: 17),
-                  ),
-                  color: Colors.green.shade500,
-                  textColor: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
+        child: !isSuccess
+            ? CircularProgressIndicator()
+            : ListView(
+                padding: EdgeInsets.only(top: 10, right: 5, left: 5),
+                children: CreateDisplay),
       ),
     );
   }
+
+  List<Widget> get CreateDisplay {
+    var widgetList = List<Widget>();
+    widgetList.add(
+      addRow(width / 5, "Aktivite Adı", "Toplam Yapılma", "Bu Yıl", "Bu Ay",
+          "Bu Hafta"),
+    );
+    var i = 1;
+    for (Report item in reportList) {
+      widgetList.add(addRow(width / 5, item.activityName, item.sum,
+          item.thisYear, item.thisMonth, item.thisWeek,
+          isGrey: i % 2 == 0 ? true : false));
+          i++;
+    }
+
+    widgetList.add(
+      Padding(
+        padding: const EdgeInsets.only(top: 8, right: 8, left: 8),
+        child: ButtonTheme(
+          height: 40,
+          child: RaisedButton(
+            onPressed: () {},
+            elevation: 4,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: Text(
+              "Yedekle",
+              style: TextStyle(fontSize: 17),
+            ),
+            color: Colors.green.shade500,
+            textColor: Colors.white,
+          ),
+        ),
+      ),
+    );
+    widgetList.add(
+      Padding(
+        padding: const EdgeInsets.only(right: 8, left: 8),
+        child: ButtonTheme(
+          height: 40,
+          child: RaisedButton(
+            onPressed: () {},
+            elevation: 4,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: Text(
+              "Yedekten Geri Yükle",
+              style: TextStyle(fontSize: 17),
+            ),
+            color: Colors.green.shade500,
+            textColor: Colors.white,
+          ),
+        ),
+      ),
+    );
+    return widgetList;
+  }
 }
 
-Container addRow(double columnWidth, str1, str2, str3, str4, str5) {
+Container addRow(double columnWidth, str1, str2, str3, str4, str5,
+    {bool isGrey}) {
   return Container(
-    // color: Colors.grey,
+    color: isGrey != null
+        ? isGrey == true ? Colors.grey : Colors.white
+        : Colors.white,
     child: Row(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
