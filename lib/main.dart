@@ -10,18 +10,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Kişisel Takip',
-      initialRoute: "/",
-      routes: {
-        '/': (context) => ActivityStatusPage(),
-        '/activityPage': (context) => ActivityPage(),
-        '/reportPage': (context) => ReportPage(),
-        '/activityAddOrUpdatePage': (context) => ActivityAddOrUpdatePage()
-      },
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-      ),
-      // home:
+        title: 'Kişisel Takip',
+        initialRoute: "/",
+        debugShowCheckedModeBanner: false,
+        routes: {  
+          '/': (context) => ActivityStatusPage(),
+          '/activityPage': (context) => ActivityPage(),
+          '/reportPage': (context) => ReportPage(),
+          '/activityAddOrUpdatePage': (context) => ActivityAddOrUpdatePage()
+        },
+        theme: ThemeData(
+          primarySwatch: Colors.red,
+        )
+        //home: ActivityStatusPage()
     );
   }
 }

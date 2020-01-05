@@ -14,7 +14,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.2.2 <3.0.0"
+  sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -26,6 +26,7 @@ dependencies:
   datetime_picker_formfield: ^0.4.3
   # flutter_datetime_picker: ^1.2.6
   date_format: ^1.0.5  
+  spreadsheet_decoder: ^1.1.0
   shared_preferences: ^0.4.3
   path_provider: ^0.4.1
   sqflite: any
@@ -51,7 +52,8 @@ flutter:
   # assets:
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
-
+  assets:
+    - assets/kalip.xlsx
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

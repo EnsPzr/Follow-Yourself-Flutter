@@ -126,6 +126,24 @@ class DatabaseHelper {
     return allActivityStatus;
   }
 
+  Future<List<ActivityStatus>> getAllActivityStatusNoDate() async {
+    var db = await _getDatabase();
+    var result = await db.query("ActivityStatus", orderBy: 'activityId ASC');
+    var allActivityStatus = List<ActivityStatus>();
+    result.forEach((f) {
+      var status = ActivityStatus.fromMap(f);
+      allActivityStatus.add(ActivityStatus.withId(
+          status.activityStatusId,
+          status.activityId,
+          status.activityValue,
+          status.date,
+          status.year,
+          status.month,
+          status.day));
+    });
+    return allActivityStatus;
+  }
+
   Future<int> saveActivityStatus(
       List<ActivityStatusVM> allActivityStatus, DateTime date) async {
     var db = await _getDatabase();
@@ -197,9 +215,10 @@ class DatabaseHelper {
           null);
       var thisMonthValue = thisMonth[0]["SUM(activityValue)"] as double;
       var todaysWeek = DateTime.now().weekday;
+      if (todaysWeek == -1) todaysWeek = 7;
       var startedDay = DateTime.now().add(Duration(days: -todaysWeek));
       var thisWeek = await db.rawQuery(
-          "select SUM(activityValue) from ActivityStatus where activityId=${activity.activityId} AND year=${startedDay.year} AND month>=${startedDay.month} AND day>=${startedDay.day}",
+          "select SUM(activityValue) from ActivityStatus where activityId=${activity.activityId} AND year>=${startedDay.year} AND month>=${startedDay.month} AND day>=${startedDay.day}",
           null);
       var thisWeekValue = thisWeek[0]["SUM(activityValue)"] as double;
       reportList.add(Report(
