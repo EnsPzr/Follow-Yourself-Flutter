@@ -2,7 +2,6 @@ class ActivityStatus {
   int _activityStatusId;
   int _activityId;
   double _activityValue;
-  DateTime _date;
   int _year;
   int _month;
   int _day;
@@ -22,9 +21,6 @@ class ActivityStatus {
     _month = month;
   }
 
-  DateTime get date => _date;
-  set date(DateTime date) => _date = date;
-
   double get activityValue => _activityValue;
   set activityValue(double activityValue) => _activityValue = activityValue;
 
@@ -35,18 +31,17 @@ class ActivityStatus {
   set activityStatusId(int activityStatusId) =>
       _activityStatusId = activityStatusId;
 
-  ActivityStatus(this._activityId, this._activityValue, this._date, this._year,
+  ActivityStatus(this._activityId, this._activityValue, this._year,
       this._month, this._day);
 
   ActivityStatus.withId(this._activityStatusId, this._activityId,
-      this._activityValue, this._date, this._year, this._month, this._day);
+      this._activityValue, this._year, this._month, this._day);
 
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
     map['activityStatusId'] = _activityStatusId;
     map['activityId'] = _activityId;
     map['activityValue'] = _activityValue;
-    map['date'] = _date.toIso8601String();
     map['year'] = _year;
     map['month'] = _month;
     map['day'] = _day;
@@ -57,7 +52,6 @@ class ActivityStatus {
     this._activityStatusId = map['activityStatusId'];
     this._activityId = map['activityId'];
     this._activityValue = (map['activityValue'] as double);
-    this._date = DateTime.parse(map['date']);
     this.year = (map['year']);
     this.month = map['month'];
     this.day = map['day'];

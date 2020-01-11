@@ -32,6 +32,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
                     context, "AKTİVİTELERİM", 15, 6, "/activityPage"),
                 CreateMenuItem(context, "GÜNLÜK TAKİP", 9, 6, "/"),
                 CreateMenuItem(context, "RAPOR", 9, 6, "/reportPage"),
+                 CreateMenuItem(context, "BİLDİRİM", 9, 6, "/notificationPage"),
               ],
             ),
           ),

@@ -22,7 +22,8 @@ class Activity {
   Activity.withId(this._activityId, this._activityName, this._isActive);
   Activity.withIdAndWithDate(this._activityId, this._activityName,
       this._isActive, this._activityRegisterDate);
-
+  Activity.withDate(this._activityName,
+      this._isActive, this._activityRegisterDate);
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
     map['activityId'] = _activityId;

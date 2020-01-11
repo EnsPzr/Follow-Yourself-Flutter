@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:followyourselfflutter/models/activity.dart';
 import 'package:followyourselfflutter/models/activityStatus.dart';
+import 'package:followyourselfflutter/models/notification.dart';
 import 'package:followyourselfflutter/viewModels/activityStatusVM.dart';
 import 'package:followyourselfflutter/viewModels/reportVM.dart';
 import 'package:path_provider/path_provider.dart';
@@ -34,8 +35,8 @@ class DatabaseHelper {
   _initializeDatabase() async {
     var klasor = await getApplicationDocumentsDirectory();
     var path = join(klasor.path, "kisiselTakip.db");
-    var kisiselTakipDb =
-        await openDatabase(path, version: 1, onCreate: _createDB);
+    var kisiselTakipDb = await openDatabase(path,
+        version: 1, onCreate: _createDB, onConfigure: _configureDB);
     debugPrint("path=>" + kisiselTakipDb.path);
     return kisiselTakipDb;
   }
@@ -44,7 +45,12 @@ class DatabaseHelper {
     await db.execute(
         "CREATE TABLE Activity (activityId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, activityName TEXT, activityRegisterDate TEXT, isActive INTEGER)");
     await db.execute(
-        "CREATE TABLE ActivityStatus (activityStatusId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, activityId INT REFERENCES Activity (activityId), activityValue DOUBLE, date TEXT, year INTEGER, month INTEGER, day INTEGER);");
+        "CREATE TABLE ActivityStatus (activityStatusId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, activityId INT REFERENCES Activity (activityId), activityValue DOUBLE, year INTEGER, month INTEGER, day INTEGER);");
+  }
+
+  Future _configureDB(Database db) async {
+    await db.execute(
+        "CREATE TABLE IF NOT EXISTS Notification (notificationId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, notificationBody TEXT, notificationHour int, notificationMinute int, isActive INTEGER)");
   }
 
   Future<List<Map<String, dynamic>>> getAllActivities({bool isActive}) async {
@@ -81,6 +87,19 @@ class DatabaseHelper {
       return true;
     else
       return false;
+    //buradan devam edilecek
+  }
+
+  Future<int> getActivity(Activity activity) async {
+    var db = await _getDatabase();
+    // var result= await db.query("Activity",where:'activityName= ?',whereArgs: [activity.activityName]);
+    var result = await db.rawQuery(
+        "select * from Activity where LOWER(activityName)='${activity.activityName.toLowerCase()}'",
+        null);
+    if (result.length > 0)
+      return Activity.fromMap(result[0]).activityId;
+    else
+      return -1;
     //buradan devam edilecek
   }
 
@@ -136,7 +155,6 @@ class DatabaseHelper {
           status.activityStatusId,
           status.activityId,
           status.activityValue,
-          status.date,
           status.year,
           status.month,
           status.day));
@@ -172,11 +190,33 @@ class DatabaseHelper {
     return counter;
   }
 
+  Future<int> saveActivityStatusSingle(
+      ActivityStatusVM allActivityStatus, DateTime date) async {
+    var result = 0;
+    var db = await _getDatabase();
+    var activityStatus = await db.query("ActivityStatus",
+        where: 'activityId=? AND year=? AND month=? AND day=?',
+        whereArgs: [
+          allActivityStatus.activityId,
+          date.year,
+          date.month,
+          date.day
+        ]);
+    if (activityStatus.length == 0) {
+      result = await addActivityStatus(allActivityStatus, date);
+    } else {
+      var astatus = ActivityStatus.fromMap(activityStatus[0]);
+      allActivityStatus.activityStatusId = astatus.activityStatusId;
+      result = await updateActivityStatus(allActivityStatus, date);
+    }
+    return result;
+  }
+
   Future<int> addActivityStatus(
       ActivityStatusVM activityStateVM, DateTime date) async {
     var db = await _getDatabase();
     var activityState = ActivityStatus(activityStateVM.activityId,
-        activityStateVM.activityValue, date, date.year, date.month, date.day);
+        activityStateVM.activityValue, date.year, date.month, date.day);
     var result = await db.insert("ActivityStatus", activityState.toMap());
     return result;
   }
@@ -188,11 +228,12 @@ class DatabaseHelper {
         activityStateVM.activityStatusId,
         activityStateVM.activityId,
         activityStateVM.activityValue,
-        date,
         date.year,
         date.month,
         date.day);
-    var result = await db.update("ActivityStatus", activityState.toMap());
+    var result = await db.update("ActivityStatus", activityState.toMap(),
+        where: 'activityStatusId = ?',
+        whereArgs: [activityState.activityStatusId]);
     return result;
   }
 
@@ -229,5 +270,17 @@ class DatabaseHelper {
           thisWeekValue != null ? thisWeekValue.toString() : "0"));
     }
     return reportList;
+  }
+
+  Future<List<NotificationModel>> getAllNotification() async {
+    var db = await _getDatabase();
+    // var result= await db.query("Activity",where:'activityName= ?',whereArgs: [activity.activityName]);
+    var query = "select * from Activity Notification";
+    var result = await db.rawQuery(query, null);
+    var cevap = new List<NotificationModel>();
+    for (var notification in result) {
+      cevap.add(NotificationModel.fromMap(notification));
+    }
+    return cevap;
   }
 }
